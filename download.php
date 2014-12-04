@@ -1,6 +1,6 @@
 <?php
 //下载文件
-$file = "/home/liufang/webtest/刘方.txt";
+$file = "";
 
 $filename = array_pop(explode('/', $file));
 
