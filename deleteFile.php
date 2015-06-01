@@ -33,6 +33,7 @@
 				}
 			}
 		}
+		chdir('../');
  		closedir($handle);
 		return true;
  	}
