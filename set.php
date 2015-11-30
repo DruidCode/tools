@@ -29,5 +29,3 @@ fclose($f);
 $t = fopen("qt.txt",'a');
 fwrite($t,$qmbi);
 fclose($t);
-
-?>
