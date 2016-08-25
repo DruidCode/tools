@@ -35,8 +35,8 @@ function read($filePath){
         return $arr;
 }
 
-
-function write($filename, $header, $datas){
+//支持多个sheet
+function write($filename, $datas){
 
         // Create new PHPExcel object
         $objPHPExcel = new PHPExcel();
@@ -44,35 +44,37 @@ function write($filename, $header, $datas){
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
                 ->setLastModifiedBy("Maarten Balliauw")
-                ->setTitle("Office 2007 XLSX Zhisland Document")
-                ->setSubject("Office 2007 XLSX Zhisland Document")
-                ->setDescription("Zhisland document for Office 2007 XLSX")
+                ->setTitle("Office 2007 XLSX Sina Document")
+                ->setSubject("Office 2007 XLSX Sina Document")
+                ->setDescription("Sina document for Office 2007 XLSX")
                 ->setKeywords("office 2007 openxml php")
-                ->setCategory("Zhisland result file");
+                ->setCategory("Sina result file");
 
-        $objPHPExcel->setActiveSheetIndex(0);
-        $start = ord('A');
-        $line = 1;
-        foreach($header as $key=>$val){
-                 $index = $key;
-                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue(chr($start + $index).$line, $val);
-        }
-    
-        // Miscellaneous glyphs, UTF-8
-        foreach($datas as $key=>$data){
-               ++$line ;
-               foreach($data as $key=>$val){
-                    $index = $key;
-                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(chr($start + $index).$line, $val);
-               }
-        }
+		$i = 0;
+		foreach ($datas as $data) {
+        	$start = ord('A');
+        	$line = 1;
+			if ( $i != 0 ) {
+				$objPHPExcel->createSheet();
+			}
+        	$objPHPExcel->setActiveSheetIndex($i);
+			$actSheet = $objPHPExcel->getActiveSheet();
+        	$actSheet->setTitle($data['title']);
+        	foreach($data['header'] as $key=>$val){
+        	         $index = $key;
+        	         $actSheet->setCellValue(chr($start + $index).$line, $val);
+        	}
 
-        // Rename worksheet
-        //$objPHPExcel->getActiveSheet()->setTitle('Zhisland');
-
-        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $objPHPExcel->setActiveSheetIndex(0);
-
+        	// Miscellaneous glyphs, UTF-8
+        	foreach($data['rows'] as $key=>$data1){
+        	       ++$line ;
+        	       foreach($data1 as $key=>$val){
+        	            $index = $key;
+        	            $actSheet->setCellValue(chr($start + $index).$line, $val);
+        	       }
+        	}
+			++$i;
+		}
 
         // Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
